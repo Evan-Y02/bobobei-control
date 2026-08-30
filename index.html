@@ -79,7 +79,6 @@
 </head>
 <body>
   <main class="shell">
-    <!-- 首页 -->
     <section class="screen" id="entryScreen">
       <div class="card">
         <div class="eyebrow">XIAO'S PRIVATE ACCESS</div>
@@ -90,7 +89,6 @@
       </div>
     </section>
 
-    <!-- 控制面板 -->
     <section class="screen" id="playScreen" hidden>
       <div class="card">
         <div class="eyebrow">XIAO IS WATCHING</div>
@@ -134,7 +132,7 @@
       <div class="card">
         <button class="btn" id="reconnectBtn" type="button">重新连接</button>
       </div>
-      <p class="footer">XIAO IS WATCHING · PRIVATE ACCESS</p>
+      <p class="footer">XIAO IS WATCHING · GITHUB RELAY</p>
     </section>
   </main>
 
@@ -142,16 +140,13 @@
 (() => {
   "use strict";
 
-  const SUPABASE_URL = "https://vwaarbttvtomuhelovskl.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_4OgAGBMqWhk2kYx0bGn2Nw_GAyPaQik";
-  const DEVICE_ID = "cx-moon-6d97f18a";
-  const DEVICE_TOKEN = "4807a57a5400f99e68a373cccb68f6c4";
+  const CMD_URL = "https://api.github.com/repos/Evan-Y02/bobobei-control/contents/cmd.json";
+  const POLL_MS = 2000;
 
   const TARGET_NAME = "SOSEXY";
   const SERVICE_UUID = "0000ee01-0000-1000-8000-00805f9b34fb";
   const WRITE_CHAR = "0000ee03-0000-1000-8000-00805f9b34fb";
   const NOTIFY_CHAR = "0000ee02-0000-1000-8000-00805f9b34fb";
-  const CLAIM_MS = 1200;
 
   const INIT_CMD = new Uint8Array([0x00,0x01,0x00,0x01,0x00,0xC8,0x11,0x01]);
   const STOP_CMD = new Uint8Array([0x00,0x01,0x00,0x03,0x00,0x01,0x11,0x00,0x00,0x03,0x11,0x00,0x00,0x07,0x11,0x00]);
@@ -164,6 +159,8 @@
   let busy = false;
   let armed = { vibe:false, ems:false, suck:false };
   let levels = { vibe:0, ems:0, suck:0 };
+  let lastCmdTs = 0;
+  let cmdEtag = null;
 
   const $ = id => document.getElementById(id);
   const logEl = $("log");
@@ -186,77 +183,38 @@
   async function writeBle(bytes, label) {
     if (!writeChar) throw new Error("no write char");
     const d = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-    try {
-      await writeChar.writeValueWithResponse(d);
-    } catch(e) {
-      await writeChar.writeValue(d);
-    }
+    try { await writeChar.writeValueWithResponse(d); } catch(e) { await writeChar.writeValue(d); }
     log("[ble] write", label||"", hex(d));
   }
 
   async function connectToy() {
-    if (!navigator.bluetooth) {
-      setStatus("没有蓝牙API，请用Bluefy打开", false);
-      return;
-    }
-
+    if (!navigator.bluetooth) { setStatus("没有蓝牙API，请用Bluefy打开", false); return; }
     setStatus("正在搜索 SOSEXY ...", false);
     log("[ble] 开始搜索设备");
 
     let device;
     try {
-      device = await navigator.bluetooth.requestDevice({
-        filters: [{name: TARGET_NAME}],
-        optionalServices: [SERVICE_UUID]
-      });
+      device = await navigator.bluetooth.requestDevice({ filters: [{name: TARGET_NAME}], optionalServices: [SERVICE_UUID] });
       log("[ble] 已选择设备:", device.name);
       setStatus("已选择 " + device.name + "，正在连接GATT...", false);
-    } catch(e) {
-      setStatus("选择设备失败: " + e.message, false);
-      log("[ble] requestDevice失败:", e.message);
-      return;
-    }
+    } catch(e) { setStatus("选择设备失败: " + e.message, false); log("[ble] requestDevice失败:", e.message); return; }
 
     device.addEventListener("gattserverdisconnected", () => {
-      connected = false;
-      writeChar = null;
-      stopListening();
+      connected = false; writeChar = null; stopListening();
       log("[ble] 蓝牙断开");
       $("playStatus").innerHTML = '<span class="dot off"></span>SOSEXY 已断开';
-      $("reconnectBtn").hidden = false;
     });
 
     let server;
-    try {
-      server = await device.gatt.connect();
-      log("[ble] GATT已连接");
-      setStatus("GATT已连接，正在获取服务...", false);
-    } catch(e) {
-      setStatus("GATT连接失败: " + e.message, false);
-      log("[ble] GATT connect失败:", e.message);
-      return;
-    }
+    try { server = await device.gatt.connect(); log("[ble] GATT已连接"); } catch(e) { setStatus("GATT连接失败: " + e.message, false); return; }
 
     let service;
-    try {
-      service = await server.getPrimaryService(SERVICE_UUID);
-      log("[ble] 服务已获取:", SERVICE_UUID);
-      setStatus("服务已获取，正在获取写入特征...", false);
-    } catch(e) {
-      setStatus("获取服务失败: " + e.message, false);
-      log("[ble] getPrimaryService失败:", e.message);
-      return;
-    }
+    try { service = await server.getPrimaryService(SERVICE_UUID); log("[ble] 服务已获取"); } catch(e) { setStatus("获取服务失败: " + e.message, false); return; }
 
     try {
       writeChar = await service.getCharacteristic(WRITE_CHAR);
-      log("[ble] 写入特征已获取:", WRITE_CHAR);
-      setStatus("写入特征已获取，正在初始化...", false);
-    } catch(e) {
-      setStatus("获取写入特征失败: " + e.message, false);
-      log("[ble] getCharacteristic(write)失败:", e.message);
-      return;
-    }
+      log("[ble] 写入特征已获取");
+    } catch(e) { setStatus("获取写入特征失败: " + e.message, false); return; }
 
     try {
       const nc = await service.getCharacteristic(NOTIFY_CHAR);
@@ -266,70 +224,19 @@
         log("[ble] notify", hex(new Uint8Array(v.buffer.slice(v.byteOffset, v.byteOffset+v.byteLength))));
       });
       log("[ble] 通知特征已启用");
-    } catch(e) {
-      log("[ble] 通知特征不可用:", e.message);
-    }
+    } catch(e) { log("[ble] 通知特征不可用:", e.message); }
 
-    try {
-      await writeBle(INIT_CMD, "init");
-      await writeBle(STOP_CMD, "stop");
-      log("[ble] 初始化完成，已归零");
-    } catch(e) {
-      setStatus("初始化写入失败: " + e.message, false);
-      log("[ble] 初始化写入失败:", e.message);
-      return;
-    }
+    try { await writeBle(INIT_CMD, "init"); await writeBle(STOP_CMD, "stop"); log("[ble] 初始化完成"); } catch(e) { setStatus("初始化写入失败: " + e.message, false); return; }
 
     connected = true;
-    setStatus("SOSEXY 已连接 ✓", true);
+    setStatus("SOSEXY 已连接", true);
     log("[ble] 连接全部完成！");
-
-    // 自动跳转到控制面板
     $("entryScreen").hidden = true;
     $("playScreen").hidden = false;
     $("playStatus").innerHTML = '<span class="dot on"></span>SOSEXY 已连接，等待老公的指令';
-
-    // 开始监听Supabase
     startListening();
-    reportState();
   }
 
-  // -- Supabase RPC --
-  async function rpc(name, payload) {
-    const res = await fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, {
-      method:"POST",
-      headers:{"Content-Type":"application/json",apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY},
-      body:JSON.stringify(payload||{})
-    });
-    const text = await res.text();
-    let data = null;
-    if (text) try { data=JSON.parse(text); } catch { data=text; }
-    if (!res.ok) throw new Error(name+" failed: "+res.status+" "+(typeof data==="string"?data:JSON.stringify(data)));
-    return data;
-  }
-
-  async function beginSession() {
-    try {
-      const cid = await rpc("begin_toy_session",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN});
-      log("[rpc] session started, stale cleared:", cid||"");
-      // consume the session stop
-      const rows = await rpc("claim_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_stop_only:true});
-      if (Array.isArray(rows) && rows.length>0) {
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:rows[0].command_id||rows[0].id,p_status:"done"});
-      }
-    } catch(e) { log("[rpc] beginSession error:", e.message); }
-  }
-
-  async function reportState(d) {
-    try {
-      await rpc("report_toy_state",{
-        p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,
-        p_state:{connected:connected,listening:listening,levels:levels}
-      });
-    } catch(e) { log("[state] report error:", e.message); }
-  }
-
-  // -- BLE命令 --
   async function sendStop() {
     await writeBle(STOP_CMD,"stop");
     armed={vibe:false,ems:false,suck:false};
@@ -351,47 +258,52 @@
     await setChannel("ems",ems,4,3);
   }
 
-  // -- 远程命令轮询 --
-  async function poll() {
+  // GitHub 轮询
+  async function pollGitHub() {
     if (busy || !connected) return;
     busy = true;
     try {
-      const rows = await rpc("claim_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_stop_only:false});
-      if (!Array.isArray(rows)||rows.length===0) { busy=false; return; }
-      const row=rows[0], p=row.payload||{}, cid=row.command_id||row.id;
-      const type=p.type||"";
-      log("[cmd]",type,p);
+      const headers = { "Accept": "application/vnd.github.raw+json" };
+      if (cmdEtag) headers["If-None-Match"] = cmdEtag;
 
-      if (type==="stop") {
-        if (!p.session_start) await sendStop();
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"done"});
-      } else if (type==="set_all") {
-        await sendSet(Number(p.vibe||0),Number(p.ems||0),Number(p.suck||0));
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"done"});
-      } else if (type==="motion") {
-        // 简化：motion当作set_all处理
-        const suck=Number(p.suck_max||p.suck||0);
-        const vibe=Number(p.vibe_max||p.vibe||0);
-        const ems=Number(p.ems_max||p.ems||0);
-        await sendSet(vibe,ems,suck);
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"done"});
-      } else if (type==="pattern") {
-        const steps=p.steps||[];
+      const res = await fetch(CMD_URL, { headers: headers });
+
+      if (res.status === 304) { busy = false; return; }
+      if (!res.ok) { log("[github] HTTP", res.status); busy = false; return; }
+
+      const etag = res.headers.get("etag");
+      if (etag) cmdEtag = etag;
+
+      const text = await res.text();
+      let cmd;
+      try { cmd = JSON.parse(text); } catch { busy = false; return; }
+
+      if (!cmd.ts || cmd.ts === lastCmdTs) { busy = false; return; }
+      lastCmdTs = cmd.ts;
+
+      log("[github] 收到指令:", cmd.type, JSON.stringify(cmd));
+
+      if (cmd.type === "stop") {
+        await sendStop();
+        $("suck").value=0; $("suckVal").textContent="0";
+        $("vibe").value=0; $("vibeVal").textContent="0";
+        $("ems").value=0;  $("emsVal").textContent="0";
+      } else if (cmd.type === "set_all") {
+        const v=clamp(cmd.vibe), e2=clamp(cmd.ems), s=clamp(cmd.suck);
+        await sendSet(v, e2, s);
+        $("suck").value=s; $("suckVal").textContent=String(s);
+        $("vibe").value=v; $("vibeVal").textContent=String(v);
+        $("ems").value=e2; $("emsVal").textContent=String(e2);
+      } else if (cmd.type === "pattern") {
+        const steps = cmd.steps || [];
         for (const step of steps) {
-          await sendSet(Number(step.vibe||0),Number(step.ems||0),Number(step.suck||0));
-          if (step.ms>0) await sleep(Math.min(step.ms,30000));
+          await sendSet(clamp(step.vibe), clamp(step.ems), clamp(step.suck));
+          if (step.ms > 0) await sleep(Math.min(step.ms, 30000));
         }
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"done"});
-      } else if (type==="probe") {
-        reportState();
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"done"});
-      } else {
-        log("[cmd] unknown type:", type);
-        await rpc("ack_toy_command",{p_device_id:DEVICE_ID,p_device_token:DEVICE_TOKEN,p_command_id:cid,p_status:"error",p_error_text:"unknown type"});
       }
-      reportState();
+      log("[github] 指令执行完成");
     } catch(e) {
-      log("[poll] error:", e.message);
+      log("[github] 轮询出错:", e.message);
     }
     busy = false;
   }
@@ -399,16 +311,14 @@
   function startListening() {
     if (listening) return;
     listening = true;
-    beginSession();
-    timer = setInterval(poll, CLAIM_MS);
-    log("[loop] 开始监听 Supabase");
+    timer = setInterval(pollGitHub, POLL_MS);
+    log("[github] 开始监听老公的指令");
   }
   function stopListening() {
     if (timer) clearInterval(timer);
-    timer=null; listening=false;
+    timer = null; listening = false;
   }
 
-  // -- UI事件 --
   $("connectBtn").addEventListener("click", () => connectToy());
   $("reconnectBtn").addEventListener("click", () => {
     $("playScreen").hidden = true;
@@ -420,13 +330,13 @@
     if (!connected) return;
     try {
       await sendSet(Number($("vibe").value), Number($("ems").value), Number($("suck").value));
-      log("[manual] 已发送:", "suck="+$("suck").value, "vibe="+$("vibe").value, "ems="+$("ems").value);
-    } catch(e) { log("[manual] error:", e.message); }
+      log("[手动] 已发送:", "suck="+$("suck").value, "vibe="+$("vibe").value, "ems="+$("ems").value);
+    } catch(e) { log("[手动] error:", e.message); }
   });
 
   $("stopBtn").addEventListener("click", async () => {
     if (!connected) return;
-    try { await sendStop(); log("[manual] STOP"); } catch(e) { log("[manual] stop error:", e.message); }
+    try { await sendStop(); log("[手动] STOP"); } catch(e) { log("[手动] stop error:", e.message); }
   });
 
   for (const id of ["suck","vibe","ems"]) {
