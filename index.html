@@ -173,7 +173,7 @@ var now=function(){return new Date().toLocaleTimeString("zh-CN",{hour12:false})}
 var hx=function(b){return Array.from(b).map(function(x){return x.toString(16).padStart(2,"0").toUpperCase()}).join(" ")};
 var sl=function(ms){return new Promise(function(r){setTimeout(r,ms)})};
 var cl=function(v){return Math.min(100,Math.max(0,Math.round(Number(v)||0)))};
-function lg(){var a=Array.from(arguments);var m=a.map(function(x){return x instanceof Uint8Array?hx(x):typeof x==="object"?JSON.stringify(x):String(x)).join(" ");L.textContent+="["+now()+"] "+m+"\n";L.scrollTop=L.scrollHeight}
+function lg(){var a=Array.from(arguments);var m=a.map(function(x){return x instanceof Uint8Array?hx(x):typeof x==="object"?JSON.stringify(x):String(x)}).join(" ");L.textContent+="["+now()+"] "+m+"\n";L.scrollTop=L.scrollHeight}
 function tFetch(url,opt,ms){var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort()},ms||6000);opt=opt||{};opt.signal=ctrl.signal;return fetch(url,opt).then(function(r){clearTimeout(tid);return r}).catch(function(e){clearTimeout(tid);throw e})}
 function wb(b,l){if(!wc)return Promise.reject(new Error("no char"));var d=b instanceof Uint8Array?b:new Uint8Array(b);return wc.writeValueWithResponse(d).catch(function(){return wc.writeValue(d)}).then(function(){lg("[ble]",l||"",hx(d))})}
 function connectToy(){
