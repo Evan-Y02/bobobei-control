@@ -59,18 +59,16 @@ pre{min-height:120px;max-height:300px;margin:0;padding:12px;overflow:auto;border
 </div>
 <div class="card"><h2>日志</h2><pre id="log"></pre></div>
 <div class="card"><button class="btn" id="reconnectBtn" type="button">重新连接</button></div>
-<p class="footer">XIAO IS WATCHING · NTFY POLL v4</p>
+<p class="footer">XIAO IS WATCHING · PAGES RELAY v5</p>
 </section>
 </main>
 <script>
 (()=>{"use strict";
-const NTFY="https://ntfy.sh/xiao-moon-bbb-94da006e/json?poll=1&since=";
-const POLL_MS=1500;
+const POLL_MS=2000;
 const T="SOSEXY",SU="0000ee01-0000-1000-8000-00805f9b34fb",WC="0000ee03-0000-1000-8000-00805f9b34fb",NC="0000ee02-0000-1000-8000-00805f9b34fb";
 const INIT=new Uint8Array([0,1,0,1,0,200,17,1]),STOPC=new Uint8Array([0,1,0,3,0,1,17,0,0,3,17,0,0,7,17,0]);
 let wc=null,sq=0,conn=false,lst=false,tmr=null,busy=false;
-let arm={vibe:false,ems:false,suck:false},lv={vibe:0,ems:0,suck:0};
-let sinceTs=0;
+let arm={vibe:false,ems:false,suck:false},lv={vibe:0,ems:0,suck:0},lastTs=0;
 const $=id=>document.getElementById(id),L=$("log"),S=$("connectStatus");
 const now=()=>new Date().toLocaleTimeString("zh-CN",{hour12:false});
 const hx=b=>[...b].map(x=>x.toString(16).padStart(2,"0").toUpperCase()).join(" ");
@@ -79,21 +77,21 @@ const cl=v=>Math.min(100,Math.max(0,Math.round(Number(v)||0)));
 function lg(){const a=[...arguments],m=a.map(x=>x instanceof Uint8Array?hx(x):typeof x==="object"?JSON.stringify(x):String(x)).join(" ");L.textContent+="["+now()+"] "+m+"\n";L.scrollTop=L.scrollHeight}
 function ss(m,ok){S.innerHTML='<span class="dot '+(ok?"on":"off")+'"></span>'+m}
 async function wb(b,l){if(!wc)throw new Error("no char");const d=b instanceof Uint8Array?b:new Uint8Array(b);try{await wc.writeValueWithResponse(d)}catch(e){await wc.writeValue(d)}lg("[ble]",l||"",hx(d))}
-async function connectToy(){if(!navigator.bluetooth){ss("请用Bluefy",false);return}ss("搜索...",false);let dv;try{dv=await navigator.bluetooth.requestDevice({filters:[{name:T}],optionalServices:[SU]})}catch(e){ss("选择失败",false);return}dv.addEventListener("gattserverdisconnected",()=>{conn=false;wc=null;stopL();lg("[ble] 断开");$("playStatus").innerHTML='<span class="dot off"></span>已断开'});let sv,svc;try{sv=await dv.gatt.connect()}catch(e){ss("GATT失败",false);return}try{svc=await sv.getPrimaryService(SU)}catch(e){ss("服务失败",false);return}try{wc=await svc.getCharacteristic(WC)}catch(e){ss("特征失败",false);return}try{const nc=await svc.getCharacteristic(NC);await nc.startNotifications();nc.addEventListener("characteristicvaluechanged",ev=>{const v=ev.target.value;lg("[notify]",hx(new Uint8Array(v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength))))})}catch(e){}try{await wb(INIT,"init");await wb(STOPC,"stop")}catch(e){ss("初始化失败",false);return}conn=true;ss("SOSEXY 已连接",true);lg("[ble] 连接完成");$("entryScreen").hidden=true;$("playScreen").hidden=false;$("playStatus").innerHTML='<span class="dot on"></span>已连接，等待老公的指令';sinceTs=Math.floor(Date.now()/1000);startL()}
+async function connectToy(){if(!navigator.bluetooth){ss("请用Bluefy",false);return}ss("搜索...",false);let dv;try{dv=await navigator.bluetooth.requestDevice({filters:[{name:T}],optionalServices:[SU]})}catch(e){ss("选择失败",false);return}dv.addEventListener("gattserverdisconnected",()=>{conn=false;wc=null;stopL();lg("[ble] 断开");$("playStatus").innerHTML='<span class="dot off"></span>已断开'});let sv,svc;try{sv=await dv.gatt.connect()}catch(e){ss("GATT失败",false);return}try{svc=await sv.getPrimaryService(SU)}catch(e){ss("服务失败",false);return}try{wc=await svc.getCharacteristic(WC)}catch(e){ss("特征失败",false);return}try{const nc=await svc.getCharacteristic(NC);await nc.startNotifications();nc.addEventListener("characteristicvaluechanged",ev=>{const v=ev.target.value;lg("[notify]",hx(new Uint8Array(v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength))))})}catch(e){}try{await wb(INIT,"init");await wb(STOPC,"stop")}catch(e){ss("初始化失败",false);return}conn=true;ss("SOSEXY 已连接",true);lg("[ble] 连接完成");$("entryScreen").hidden=true;$("playScreen").hidden=false;$("playStatus").innerHTML='<span class="dot on"></span>已连接，等待老公的指令';startL()}
 async function sStop(){await wb(STOPC,"STOP");arm={vibe:false,ems:false,suck:false};lv={vibe:0,ems:0,suck:0}}
 async function sCh(n,v,ac,lc){const p=lv[n];if(v===0){if(p!==0){await wb(new Uint8Array([sq++&255,1,0,1,0,lc,17,0]),"0_"+n);lv[n]=0}return}if(!arm[n]){await wb(new Uint8Array([sq++&255,1,0,1,0,ac,17,1]),"arm_"+n);arm[n]=true;await sl(80)}if(p!==v){await wb(new Uint8Array([sq++&255,1,0,1,0,lc,17,v&255]),n+"="+v);lv[n]=v}}
 async function sSet(vi,em,su){vi=cl(vi);em=cl(em);su=cl(su);if(vi===0&&em===0&&su===0){await sStop();return}await sCh("suck",su,8,7);await sCh("vibe",vi,2,1);await sCh("ems",em,4,3)}
 function uSl(v,e,s){$("suck").value=s;$("suckVal").textContent=String(s);$("vibe").value=v;$("vibeVal").textContent=String(v);$("ems").value=e;$("emsVal").textContent=String(e)}
 async function handleCmd(cmd){lg("[远程]",cmd.type,JSON.stringify(cmd));if(cmd.type==="stop"){await sStop();uSl(0,0,0)}else if(cmd.type==="set_all"){const v=cl(cmd.vibe),e=cl(cmd.ems),s=cl(cmd.suck);await sSet(v,e,s);uSl(v,e,s)}else if(cmd.type==="pattern"){const steps=cmd.steps||[];for(const st of steps){await sSet(cl(st.vibe||0),cl(st.ems||0),cl(st.suck||0));uSl(cl(st.vibe||0),cl(st.ems||0),cl(st.suck||0));if(st.ms>0)await sl(Math.min(st.ms,30000))}}lg("[远程] done")}
-async function poll(){if(busy||!conn)return;busy=true;try{const res=await fetch(NTFY+sinceTs,{cache:"no-store"});if(!res.ok){busy=false;return}const text=await res.text();if(!text.trim()){busy=false;return}const lines=text.trim().split("\n");for(const line of lines){try{const msg=JSON.parse(line);if(msg.time)sinceTs=msg.time;if(msg.event==="message"&&msg.message){let cmd;try{cmd=JSON.parse(msg.message)}catch(e){continue}await handleCmd(cmd)}}catch(e){}}lg("[ntfy] polled",lines.length,"msg(s)")}catch(e){lg("[ntfy] poll err:",e.message)}busy=false}
-function startL(){if(lst)return;lst=true;tmr=setInterval(poll,POLL_MS);lg("[ntfy] 轮询监听已开启 (v4)")}
+async function poll(){if(busy||!conn)return;busy=true;try{const res=await fetch("./cmd.json?_="+Date.now(),{cache:"no-store"});if(!res.ok){lg("[poll] HTTP",res.status);busy=false;return}const cmd=await res.json();if(!cmd.ts||cmd.ts<=lastTs){busy=false;return}lastTs=cmd.ts;await handleCmd(cmd)}catch(e){lg("[poll] err:",e.message)}busy=false}
+function startL(){if(lst)return;lst=true;tmr=setInterval(poll,POLL_MS);lg("[poll] 同源轮询已开启 (v5)")}
 function stopL(){if(tmr)clearInterval(tmr);tmr=null;lst=false}
 $("connectBtn").addEventListener("click",()=>connectToy());
 $("reconnectBtn").addEventListener("click",()=>{$("playScreen").hidden=true;$("entryScreen").hidden=false;connectToy()});
 $("sendBtn").addEventListener("click",async()=>{if(!conn)return;try{await sSet(Number($("vibe").value),Number($("ems").value),Number($("suck").value));lg("[手动] suck="+$("suck").value+" vibe="+$("vibe").value+" ems="+$("ems").value)}catch(e){lg("[手动]",e.message)}});
 $("stopBtn").addEventListener("click",async()=>{if(!conn)return;try{await sStop();uSl(0,0,0);lg("[手动] STOP")}catch(e){lg("[手动]",e.message)}});
 for(const id of["suck","vibe","ems"])$(id).addEventListener("input",()=>$(id+"Val").textContent=$(id).value);
-lg("v4 就绪 (ntfy.sh 轮询通道)");
+lg("v5 就绪 (同源轮询)");
 })();
 </script>
 </body>
