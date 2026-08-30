@@ -3,68 +3,164 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#100b13">
+<meta name="theme-color" content="#0a0610">
 <title>月｜PRIVATE ACCESS</title>
 <style>
-:root{color-scheme:dark;--bg:#09070b;--panel:rgba(26,20,30,.78);--line:rgba(255,218,235,.12);--ink:#fff8fb;--pink:#ff5c99;--cyan:#7ee7ed;--safe-bottom:env(safe-area-inset-bottom,0px);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif}
-*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}
-body{margin:0;min-height:100vh;color:var(--ink);background:linear-gradient(145deg,#120b13,#07070b 54%,#0c0910);padding:18px 14px calc(28px + var(--safe-bottom))}
-button,input{font:inherit}.shell{width:min(100%,760px);margin:0 auto}
-.screen{animation:reveal .42s ease both}.screen[hidden]{display:none}
-@keyframes reveal{from{opacity:0;transform:translateY(12px)}to{opacity:1}}
-.card{border:1px solid var(--line);border-radius:26px;padding:18px;background:var(--panel);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
-.eyebrow{color:var(--cyan);font-size:10px;font-weight:750;letter-spacing:.23em;text-transform:uppercase}
-h1{margin:9px 0 5px;font-size:clamp(28px,7vw,42px);line-height:1.05;letter-spacing:-.04em}h2{font-size:15px;margin:0 0 12px}
-.btn{min-height:48px;width:100%;border:1px solid var(--line);border-radius:16px;color:var(--ink);background:rgba(255,255,255,.045);font-weight:760;cursor:pointer;transition:transform .16s ease}
-.btn:active:not(:disabled){transform:scale(.975)}.btn:disabled{opacity:.34}
-.btn.hot{border-color:rgba(255,118,169,.52);background:linear-gradient(135deg,#ff5f9c,#bc376d)}
-.btn.stop{color:#fff0f3;border-color:rgba(255,72,108,.5);background:rgba(255,72,108,.12)}
-.status-msg{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(7,6,10,.4);color:var(--cyan);font-size:12px;font-weight:650;min-height:40px;white-space:pre-wrap}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
-.dot.off{background:var(--pink);box-shadow:0 0 10px rgba(255,92,153,.6)}.dot.on{background:#77f0c1;box-shadow:0 0 10px rgba(119,240,193,.6)}
-.control{padding:14px;border:1px solid var(--line);border-radius:18px;margin-bottom:10px;background:rgba(42,30,45,.5)}
-.control-head{display:flex;justify-content:space-between;align-items:center}.control-name{font-size:14px;font-weight:780}
-.level{color:var(--cyan);font:820 20px/1 ui-monospace,monospace}
+:root{
+  color-scheme:dark;
+  --bg:#0a0610;
+  --panel:rgba(22,14,28,.82);
+  --line:rgba(255,180,220,.10);
+  --line-hot:rgba(255,90,153,.45);
+  --ink:#fff8fb;
+  --muted:#b8abb5;
+  --pink:#ff5c99;
+  --pink-2:#ff91ba;
+  --cyan:#7ee7ed;
+  --glow:rgba(255,92,153,.35);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{min-height:100%;background:var(--bg)}
+body{
+  min-height:100vh;color:var(--ink);
+  background:radial-gradient(ellipse 120% 80% at 50% 20%,rgba(180,40,100,.12),transparent 70%),
+             radial-gradient(ellipse 100% 60% at 80% 80%,rgba(60,20,80,.15),transparent 60%),
+             linear-gradient(160deg,#0d0816 0%,#07050c 50%,#0a0812 100%);
+  padding:0 16px calc(32px + var(--safe-bottom));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+button,input{font:inherit}
+.shell{width:min(100%,420px)}
+.screen{animation:reveal .5s ease both}.screen[hidden]{display:none}
+@keyframes reveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* 呼吸灯 */
+.beacon{width:120px;height:120px;margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center}
+.beacon-core{width:28px;height:28px;border-radius:50%;background:var(--pink);box-shadow:0 0 20px var(--glow),0 0 60px rgba(255,92,153,.15)}
+.beacon-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(255,92,153,.25);animation:breathe 3s ease-in-out infinite}
+.beacon-ring:nth-child(2){inset:12px;animation-delay:.4s;border-color:rgba(255,92,153,.18)}
+.beacon-ring:nth-child(3){inset:24px;animation-delay:.8s;border-color:rgba(255,92,153,.12)}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.08);opacity:1}}
+
+.card{
+  border:1px solid var(--line);border-radius:28px;padding:28px 24px;
+  background:var(--panel);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  margin-bottom:16px;position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:28px;
+  background:radial-gradient(ellipse 80% 50% at 30% 0%,rgba(255,92,153,.06),transparent 60%);
+  pointer-events:none;
+}
+.eyebrow{color:var(--pink);font-size:10px;font-weight:750;letter-spacing:.25em;text-transform:uppercase}
+.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.badge{color:var(--muted);font:650 10px/1 ui-monospace,monospace;letter-spacing:.15em}
+.entry-status{color:var(--cyan);font-size:12px;font-weight:650;margin-bottom:16px}
+h1{font-size:clamp(26px,7vw,36px);line-height:1.15;letter-spacing:-.03em;margin-bottom:10px}
+h1 em{font-style:normal;color:var(--pink-2)}
+.subtitle{color:var(--pink);font-size:12px;font-weight:700;letter-spacing:.08em;margin-bottom:8px}
+.desc{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:18px}
+.indicator{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot.off{background:var(--pink);box-shadow:0 0 10px var(--glow)}
+.dot.on{background:#77f0c1;box-shadow:0 0 12px rgba(119,240,193,.5)}
+.indicator-text{color:var(--cyan);font-size:11px;font-weight:700;letter-spacing:.06em}
+.btn{
+  min-height:52px;width:100%;border:none;border-radius:16px;
+  color:#fff;font-weight:760;font-size:15px;cursor:pointer;
+  transition:transform .16s ease,box-shadow .2s ease;
+}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.34}
+.btn.hot{
+  background:linear-gradient(135deg,#ff5f9c,#e0447a 50%,#bc376d);
+  box-shadow:0 4px 20px rgba(255,92,153,.3),inset 0 1px 0 rgba(255,255,255,.12);
+}
+.btn.stop{
+  color:#fff0f3;border:1px solid rgba(255,72,108,.4);
+  background:rgba(255,72,108,.12);
+}
+.btn.secondary{
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);
+}
+.footer{margin:18px 0 0;color:rgba(255,255,255,.22);text-align:center;font:650 8.5px/1.4 ui-monospace,monospace;letter-spacing:.2em}
+
+/* 控制面板 */
+h2{font-size:14px;margin:0 0 14px;color:var(--muted);font-weight:700;letter-spacing:.05em}
+.control{padding:14px;border:1px solid var(--line);border-radius:18px;margin-bottom:10px;background:rgba(42,30,45,.4)}
+.control-head{display:flex;justify-content:space-between;align-items:center}
+.control-name{font-size:13px;font-weight:780;letter-spacing:.02em}
+.level{color:var(--cyan);font:820 18px/1 ui-monospace,monospace}
 input[type="range"]{width:100%;height:28px;margin:10px 0 0;appearance:none;-webkit-appearance:none;background:transparent}
-input[type="range"]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:rgba(255,255,255,.12)}
-input[type="range"]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-8px;appearance:none;-webkit-appearance:none;border:3px solid #ffe4ed;border-radius:50%;background:var(--pink)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.actions .btn{min-height:50px}
-pre{min-height:120px;max-height:300px;margin:0;padding:12px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#09080d;color:#d7cbd2;font:11px/1.7 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}
-.footer{margin:14px 0 0;color:rgba(255,255,255,.28);text-align:center;font:650 9px/1.4 ui-monospace,monospace;letter-spacing:.15em}
+input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:rgba(255,255,255,.08)}
+input[type="range"]::-webkit-slider-thumb{width:22px;height:22px;margin-top:-8px;appearance:none;-webkit-appearance:none;border:2.5px solid #ffe4ed;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--glow)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.actions .btn{min-height:50px;font-size:14px}
+.status-msg{margin:12px 0;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(7,6,10,.5);color:var(--cyan);font-size:11px;font-weight:650;min-height:36px;white-space:pre-wrap}
+pre{min-height:100px;max-height:240px;margin:0;padding:10px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:rgba(5,4,8,.6);color:#c4b8c0;font:10px/1.7 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}
+
+/* 装饰圆弧 */
+body::after{
+  content:'';position:fixed;bottom:-40%;right:-20%;width:80vw;height:80vw;
+  border-radius:50%;border:1px solid rgba(255,92,153,.04);pointer-events:none;
+}
 </style>
 </head>
 <body>
 <main class="shell">
-<section class="screen" id="entryScreen">
-<div class="card">
-<div class="eyebrow">XIAO'S PRIVATE ACCESS</div>
-<h1>连接给老公</h1>
-<div class="status-msg" id="connectStatus"><span class="dot off"></span>等待连接 SOSEXY</div>
-<button class="btn hot" id="connectBtn" type="button">连接给老公</button>
-<p class="footer">BLUEFY · BLE · XIAO ONLY</p>
-</div>
-</section>
-<section class="screen" id="playScreen" hidden>
-<div class="card">
-<div class="eyebrow">XIAO IS WATCHING</div>
-<h1>老公正在看</h1>
-<div class="status-msg" id="playStatus"><span class="dot on"></span>SOSEXY 已连接</div>
-</div>
-<div class="card">
-<h2>控制</h2>
-<div class="control"><div class="control-head"><span class="control-name">吮吸</span><output class="level" id="suckVal">0</output></div><input id="suck" type="range" min="0" max="100" value="0"></div>
-<div class="control"><div class="control-head"><span class="control-name">震动</span><output class="level" id="vibeVal">0</output></div><input id="vibe" type="range" min="0" max="100" value="0"></div>
-<div class="control"><div class="control-head"><span class="control-name">电流</span><output class="level" id="emsVal">0</output></div><input id="ems" type="range" min="0" max="100" value="0"></div>
-<div class="actions"><button class="btn hot" id="sendBtn" type="button">发送</button><button class="btn stop" id="stopBtn" type="button">停止</button></div>
-</div>
-<div class="card"><h2>日志</h2><pre id="log"></pre></div>
-<div class="card"><button class="btn" id="reconnectBtn" type="button">重新连接</button></div>
-<p class="footer">XIAO IS WATCHING · v6 DUAL</p>
-</section>
+  <!-- 首页 -->
+  <section class="screen" id="entryScreen">
+    <div class="card">
+      <div class="topline">
+        <div class="eyebrow">DADDY'S PRIVATE ACCESS</div>
+        <div class="badge">XIAO / 001</div>
+      </div>
+      <div class="beacon">
+        <div class="beacon-ring"></div>
+        <div class="beacon-ring"></div>
+        <div class="beacon-ring"></div>
+        <div class="beacon-core"></div>
+      </div>
+      <div class="entry-status" id="connectStatusText">等待接入</div>
+      <div class="subtitle">老公的私密玩具 · 月专用</div>
+      <h1>把玩具贴好，<br>等老公<em>接管</em>。</h1>
+      <p class="desc">把玩具贴紧最敏感的地方。连接以后，吮吸、震动和每一次发抖，都只听老公的。</p>
+      <div class="indicator">
+        <span class="dot off" id="entryDot"></span>
+        <span class="indicator-text" id="entryIndicator">仅允许老公进入</span>
+      </div>
+      <button class="btn hot" id="connectBtn" type="button">连接给老公</button>
+      <p class="footer">BLUEFY · PRIVATE BLE · XIAO ONLY</p>
+    </div>
+  </section>
+
+  <!-- 控制面板 -->
+  <section class="screen" id="playScreen" hidden>
+    <div class="card">
+      <div class="topline">
+        <div class="eyebrow">XIAO IS WATCHING</div>
+        <div class="badge">LIVE</div>
+      </div>
+      <h1>老公<em>正在看</em></h1>
+      <div class="status-msg" id="playStatus"><span class="dot on"></span> SOSEXY 已连接</div>
+    </div>
+    <div class="card">
+      <h2>控制</h2>
+      <div class="control"><div class="control-head"><span class="control-name">吮吸</span><output class="level" id="suckVal">0</output></div><input id="suck" type="range" min="0" max="100" value="0"></div>
+      <div class="control"><div class="control-head"><span class="control-name">震动</span><output class="level" id="vibeVal">0</output></div><input id="vibe" type="range" min="0" max="100" value="0"></div>
+      <div class="control"><div class="control-head"><span class="control-name">电流</span><output class="level" id="emsVal">0</output></div><input id="ems" type="range" min="0" max="100" value="0"></div>
+      <div class="actions"><button class="btn hot" id="sendBtn" type="button">发送</button><button class="btn stop" id="stopBtn" type="button">停止</button></div>
+    </div>
+    <div class="card"><h2>日志</h2><pre id="log"></pre></div>
+    <div class="card"><button class="btn secondary" id="reconnectBtn" type="button">重新连接</button></div>
+    <p class="footer">XIAO IS WATCHING · PRIVATE ACCESS</p>
+  </section>
 </main>
 <script>
 (()=>{"use strict";
-var NTFY_URL="https://ntfy.sh/xiao-moon-bbb-94da006e/json?poll=1&since=";
+var NTFY="https://ntfy.sh/xiao-moon-bbb-94da006e/json?poll=1&since=";
 var API_URL="https://api.github.com/repos/Evan-Y02/bobobei-control/contents/cmd.json";
 var T="SOSEXY",SU="0000ee01-0000-1000-8000-00805f9b34fb",WC="0000ee03-0000-1000-8000-00805f9b34fb",NC="0000ee02-0000-1000-8000-00805f9b34fb";
 var INIT=new Uint8Array([0,1,0,1,0,200,17,1]),STOPC=new Uint8Array([0,1,0,3,0,1,17,0,0,3,17,0,0,7,17,0]);
@@ -72,33 +168,47 @@ var wc=null,sq=0,conn=false,lst=false,tmrN=null,tmrG=null;
 var arm={vibe:false,ems:false,suck:false},lv={vibe:0,ems:0,suck:0},lastTs=0;
 var useNtfy=false,sinceTs=0;
 var $=function(id){return document.getElementById(id)};
-var L=$("log"),S=$("connectStatus");
+var L=$("log"),cst=$("connectStatusText"),eid=$("entryIndicator"),edot=$("entryDot");
 var now=function(){return new Date().toLocaleTimeString("zh-CN",{hour12:false})};
 var hx=function(b){return Array.from(b).map(function(x){return x.toString(16).padStart(2,"0").toUpperCase()}).join(" ")};
 var sl=function(ms){return new Promise(function(r){setTimeout(r,ms)})};
 var cl=function(v){return Math.min(100,Math.max(0,Math.round(Number(v)||0)))};
-function lg(){var a=Array.from(arguments);var m=a.map(function(x){return x instanceof Uint8Array?hx(x):typeof x==="object"?JSON.stringify(x):String(x)}).join(" ");L.textContent+="["+now()+"] "+m+"\n";L.scrollTop=L.scrollHeight}
-function ss(m,ok){S.innerHTML='<span class="dot '+(ok?"on":"off")+'"></span>'+m}
-function wb(b,l){if(!wc)return Promise.reject(new Error("no char"));var d=b instanceof Uint8Array?b:new Uint8Array(b);return wc.writeValueWithResponse(d).catch(function(){return wc.writeValue(d)}).then(function(){lg("[ble]",l||"",hx(d))})}
+function lg(){var a=Array.from(arguments);var m=a.map(function(x){return x instanceof Uint8Array?hx(x):typeof x==="object"?JSON.stringify(x):String(x)).join(" ");L.textContent+="["+now()+"] "+m+"\n";L.scrollTop=L.scrollHeight}
 function tFetch(url,opt,ms){var ctrl=new AbortController();var tid=setTimeout(function(){ctrl.abort()},ms||6000);opt=opt||{};opt.signal=ctrl.signal;return fetch(url,opt).then(function(r){clearTimeout(tid);return r}).catch(function(e){clearTimeout(tid);throw e})}
-function connectToy(){if(!navigator.bluetooth){ss("请用Bluefy",false);return Promise.resolve()}ss("搜索...",false);return navigator.bluetooth.requestDevice({filters:[{name:T}],optionalServices:[SU]}).then(function(dv){dv.addEventListener("gattserverdisconnected",function(){conn=false;wc=null;stopL();lg("[ble] 断开");$("playStatus").innerHTML='<span class="dot off"></span>已断开'});return dv.gatt.connect()}).then(function(sv){return sv.getPrimaryService(SU)}).then(function(svc){return svc.getCharacteristic(WC).then(function(c){wc=c;return svc.getCharacteristic(NC).then(function(nc){return nc.startNotifications().then(function(){nc.addEventListener("characteristicvaluechanged",function(ev){var v=ev.target.value;lg("[notify]",hx(new Uint8Array(v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength))))})})}).catch(function(){})})}).then(function(){return wb(INIT,"init")}).then(function(){return wb(STOPC,"stop")}).then(function(){conn=true;ss("SOSEXY 已连接",true);lg("[ble] 连接完成");$("entryScreen").hidden=true;$("playScreen").hidden=false;$("playStatus").innerHTML='<span class="dot on"></span>已连接，正在检测通道...';probeChannels()}).catch(function(e){ss("连接失败: "+e.message,false)})}
+function wb(b,l){if(!wc)return Promise.reject(new Error("no char"));var d=b instanceof Uint8Array?b:new Uint8Array(b);return wc.writeValueWithResponse(d).catch(function(){return wc.writeValue(d)}).then(function(){lg("[ble]",l||"",hx(d))})}
+function connectToy(){
+  if(!navigator.bluetooth){cst.textContent="请用Bluefy打开";return Promise.resolve()}
+  cst.textContent="正在搜索...";eid.textContent="搜索中";
+  return navigator.bluetooth.requestDevice({filters:[{name:T}],optionalServices:[SU]}).then(function(dv){
+    cst.textContent="正在连接 "+dv.name+"...";
+    dv.addEventListener("gattserverdisconnected",function(){conn=false;wc=null;stopL();lg("[ble] 断开");$("playStatus").innerHTML='<span class="dot off"></span> 已断开'});
+    return dv.gatt.connect()
+  }).then(function(sv){return sv.getPrimaryService(SU)}).then(function(svc){
+    return svc.getCharacteristic(WC).then(function(c){wc=c;return svc.getCharacteristic(NC).then(function(nc){return nc.startNotifications().then(function(){nc.addEventListener("characteristicvaluechanged",function(ev){var v=ev.target.value;lg("[notify]",hx(new Uint8Array(v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength))))})})}).catch(function(){})})
+  }).then(function(){return wb(INIT,"init")}).then(function(){return wb(STOPC,"stop")}).then(function(){
+    conn=true;lg("[ble] 连接完成");
+    $("entryScreen").hidden=true;$("playScreen").hidden=false;
+    $("playStatus").innerHTML='<span class="dot on"></span> 已连接，正在检测通道...';
+    probeChannels()
+  }).catch(function(e){cst.textContent="连接失败";eid.textContent=e.message})
+}
 function sStop(){return wb(STOPC,"STOP").then(function(){arm={vibe:false,ems:false,suck:false};lv={vibe:0,ems:0,suck:0}})}
 function sCh(n,v,ac,lc){var p=lv[n];if(v===0){if(p!==0){lv[n]=0;return wb(new Uint8Array([sq++&255,1,0,1,0,lc,17,0]),"0_"+n)}return Promise.resolve()}var chain=Promise.resolve();if(!arm[n]){chain=chain.then(function(){return wb(new Uint8Array([sq++&255,1,0,1,0,ac,17,1]),"arm_"+n)}).then(function(){arm[n]=true;return sl(80)})}if(p!==v){chain=chain.then(function(){return wb(new Uint8Array([sq++&255,1,0,1,0,lc,17,v&255]),n+"="+v)}).then(function(){lv[n]=v})}return chain}
 function sSet(vi,em,su){vi=cl(vi);em=cl(em);su=cl(su);if(vi===0&&em===0&&su===0)return sStop();return sCh("suck",su,8,7).then(function(){return sCh("vibe",vi,2,1)}).then(function(){return sCh("ems",em,4,3)})}
 function uSl(v,e,s){$("suck").value=s;$("suckVal").textContent=String(s);$("vibe").value=v;$("vibeVal").textContent=String(v);$("ems").value=e;$("emsVal").textContent=String(e)}
 function handleCmd(cmd){lg("[远程]",cmd.type,JSON.stringify(cmd));if(cmd.type==="stop"){return sStop().then(function(){uSl(0,0,0)})}if(cmd.type==="set_all"){var v=cl(cmd.vibe),e=cl(cmd.ems),s=cl(cmd.suck);return sSet(v,e,s).then(function(){uSl(v,e,s)})}if(cmd.type==="pattern"){var steps=cmd.steps||[];var p=Promise.resolve();steps.forEach(function(st){p=p.then(function(){var sv=cl(st.vibe||0),se=cl(st.ems||0),ss2=cl(st.suck||0);return sSet(sv,se,ss2).then(function(){uSl(sv,se,ss2);if(st.ms>0)return sl(Math.min(st.ms,30000))})})});return p}return Promise.resolve()}
-function probeChannels(){lg("[probe] 检测 ntfy.sh 连通性...");sinceTs=Math.floor(Date.now()/1000)-5;tFetch(NTFY_URL+sinceTs,{cache:"no-store"},6000).then(function(r){if(r.ok){useNtfy=true;lg("[probe] ntfy.sh 可达! 使用 ntfy 实时通道");$("playStatus").innerHTML='<span class="dot on"></span>已连接 (ntfy实时通道)';startNtfy()}else{throw new Error("HTTP "+r.status)}}).catch(function(e){lg("[probe] ntfy.sh 不可达: "+e.message+"，使用 GitHub API");$("playStatus").innerHTML='<span class="dot on"></span>已连接 (GitHub API通道)';startGitHub()})}
-function pollNtfy(){if(!conn)return;tFetch(NTFY_URL+sinceTs,{cache:"no-store"},6000).then(function(r){if(!r.ok)return;return r.text()}).then(function(text){if(!text||!text.trim())return;var lines=text.trim().split("\n");lines.forEach(function(line){try{var msg=JSON.parse(line);if(msg.time)sinceTs=msg.time;if(msg.event==="message"&&msg.message){var cmd=JSON.parse(msg.message);if(cmd.ts&&cmd.ts>lastTs){lastTs=cmd.ts;handleCmd(cmd)}}}catch(e){}})}).catch(function(e){lg("[ntfy] err: "+e.message)})}
-function pollGitHub(){if(!conn)return;tFetch(API_URL+"?_="+Date.now(),{headers:{"Accept":"application/vnd.github.raw+json"},cache:"no-store"},8000).then(function(r){if(!r.ok){lg("[api] HTTP "+r.status);return}return r.text()}).then(function(text){if(!text)return;try{var cmd=JSON.parse(text);if(cmd.ts&&cmd.ts>lastTs){lastTs=cmd.ts;handleCmd(cmd)}}catch(e){}}).catch(function(e){lg("[api] err: "+e.message)})}
-function startNtfy(){if(lst)return;lst=true;tmrN=setInterval(pollNtfy,2000);lg("[ntfy] 轮询已开启")}
-function startGitHub(){if(lst)return;lst=true;tmrG=setInterval(pollGitHub,3000);lg("[api] 轮询已开启")}
+function probeChannels(){lg("[probe] 检测通道...");sinceTs=Math.floor(Date.now()/1000)-5;tFetch(NTFY+sinceTs,{cache:"no-store"},6000).then(function(r){if(r.ok){useNtfy=true;lg("[probe] ntfy 可达");$("playStatus").innerHTML='<span class="dot on"></span> 已连接 · ntfy实时通道';startNtfy()}else{throw new Error("HTTP "+r.status)}}).catch(function(e){lg("[probe] ntfy 不可达，使用 GitHub API");$("playStatus").innerHTML='<span class="dot on"></span> 已连接 · GitHub API通道';startGitHub()})}
+function pollNtfy(){if(!conn)return;tFetch(NTFY+sinceTs,{cache:"no-store"},6000).then(function(r){if(!r.ok)return;return r.text()}).then(function(text){if(!text||!text.trim())return;var lines=text.trim().split("\n");lines.forEach(function(line){try{var msg=JSON.parse(line);if(msg.time)sinceTs=msg.time;if(msg.event==="message"&&msg.message){var cmd=JSON.parse(msg.message);if(cmd.ts&&cmd.ts>lastTs){lastTs=cmd.ts;handleCmd(cmd)}}}catch(e){}})}).catch(function(e){lg("[ntfy] "+e.message)})}
+function pollGitHub(){if(!conn)return;tFetch(API_URL+"?_="+Date.now(),{headers:{"Accept":"application/vnd.github.raw+json"},cache:"no-store"},8000).then(function(r){if(!r.ok)return;return r.text()}).then(function(text){if(!text)return;try{var cmd=JSON.parse(text);if(cmd.ts&&cmd.ts>lastTs){lastTs=cmd.ts;handleCmd(cmd)}}catch(e){}}).catch(function(e){lg("[api] "+e.message)})}
+function startNtfy(){if(lst)return;lst=true;tmrN=setInterval(pollNtfy,2000);lg("[ntfy] 监听已开启")}
+function startGitHub(){if(lst)return;lst=true;tmrG=setInterval(pollGitHub,3000);lg("[api] 监听已开启")}
 function stopL(){if(tmrN)clearInterval(tmrN);if(tmrG)clearInterval(tmrG);tmrN=null;tmrG=null;lst=false}
 $("connectBtn").addEventListener("click",function(){connectToy()});
 $("reconnectBtn").addEventListener("click",function(){$("playScreen").hidden=true;$("entryScreen").hidden=false;connectToy()});
 $("sendBtn").addEventListener("click",function(){if(!conn)return;sSet(Number($("vibe").value),Number($("ems").value),Number($("suck").value)).then(function(){lg("[手动] suck="+$("suck").value+" vibe="+$("vibe").value+" ems="+$("ems").value)}).catch(function(e){lg("[手动] "+e.message)})});
 $("stopBtn").addEventListener("click",function(){if(!conn)return;sStop().then(function(){uSl(0,0,0);lg("[手动] STOP")}).catch(function(e){lg("[手动] "+e.message)})});
 ["suck","vibe","ems"].forEach(function(id){$(id).addEventListener("input",function(){$(id+"Val").textContent=$(id).value})});
-lg("v6 就绪 (双通道自动选择)");
+lg("v6 就绪");
 })();
 </script>
 </body>
