@@ -6,74 +6,31 @@
   <meta name="theme-color" content="#100b13">
   <title>月｜PRIVATE ACCESS</title>
   <style>
-    :root {
-      color-scheme: dark;
-      --bg: #09070b;
-      --panel: rgba(26, 20, 30, .78);
-      --line: rgba(255, 218, 235, .12);
-      --ink: #fff8fb;
-      --muted: #b8abb5;
-      --pink: #ff5c99;
-      --pink-2: #ff91ba;
-      --cyan: #7ee7ed;
-      --danger: #ff486c;
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", sans-serif;
-    }
-    * { box-sizing: border-box; }
-    html { min-height: 100%; background: var(--bg); }
-    body {
-      margin: 0; min-height: 100vh; color: var(--ink);
-      background: linear-gradient(145deg, #120b13 0%, #07070b 54%, #0c0910 100%);
-      padding: 18px 14px calc(28px + var(--safe-bottom));
-    }
-    button, input { font: inherit; }
-    .shell { width: min(100%, 760px); margin: 0 auto; }
-    .screen { animation: reveal .42s ease both; }
-    .screen[hidden] { display: none; }
-    @keyframes reveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-    .card {
-      border: 1px solid var(--line); border-radius: 26px; padding: 18px;
-      background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      margin-bottom: 14px;
-    }
-    .eyebrow { color: var(--cyan); font-size: 10px; font-weight: 750; letter-spacing: .23em; text-transform: uppercase; }
-    h1 { margin: 9px 0 5px; font-size: clamp(28px, 7vw, 42px); line-height: 1.05; letter-spacing: -.04em; }
-    h2 { font-size: 15px; margin: 0 0 12px; }
-    .btn {
-      min-height: 48px; width: 100%; border: 1px solid var(--line); border-radius: 16px;
-      color: var(--ink); background: rgba(255,255,255,.045); font-weight: 760; cursor: pointer;
-      transition: transform .16s ease;
-    }
-    .btn:active:not(:disabled) { transform: scale(.975); }
-    .btn:disabled { opacity: .34; }
-    .btn.hot { border-color: rgba(255,118,169,.52); background: linear-gradient(135deg, #ff5f9c, #bc376d); }
-    .btn.stop { color: #fff0f3; border-color: rgba(255,72,108,.5); background: rgba(255,72,108,.12); }
-    .status-msg {
-      margin: 12px 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px;
-      background: rgba(7,6,10,.4); color: var(--cyan); font-size: 12px; font-weight: 650;
-      min-height: 40px; white-space: pre-wrap;
-    }
-    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-    .dot.off { background: var(--pink); box-shadow: 0 0 10px rgba(255,92,153,.6); }
-    .dot.on { background: #77f0c1; box-shadow: 0 0 10px rgba(119,240,193,.6); }
-    .control { padding: 14px; border: 1px solid var(--line); border-radius: 18px; margin-bottom: 10px; background: rgba(42,30,45,.5); }
-    .control-head { display: flex; justify-content: space-between; align-items: center; }
-    .control-name { font-size: 14px; font-weight: 780; }
-    .level { color: var(--cyan); font: 820 20px/1 ui-monospace, monospace; }
-    input[type="range"] {
-      width: 100%; height: 28px; margin: 10px 0 0; appearance: none; -webkit-appearance: none; background: transparent;
-    }
-    input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 99px; background: rgba(255,255,255,.12); }
-    input[type="range"]::-webkit-slider-thumb { width: 24px; height: 24px; margin-top: -8px; appearance: none; -webkit-appearance: none; border: 3px solid #ffe4ed; border-radius: 50%; background: var(--pink); }
-    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
-    .actions .btn { min-height: 50px; }
-    pre {
-      min-height: 120px; max-height: 300px; margin: 0; padding: 12px; overflow: auto;
-      border: 1px solid var(--line); border-radius: 12px; background: #09080d;
-      color: #d7cbd2; font: 11px/1.7 ui-monospace, monospace; white-space: pre-wrap; word-break: break-word;
-    }
-    .footer { margin: 14px 0 0; color: rgba(255,255,255,.28); text-align: center; font: 650 9px/1.4 ui-monospace, monospace; letter-spacing: .15em; }
+    :root{color-scheme:dark;--bg:#09070b;--panel:rgba(26,20,30,.78);--line:rgba(255,218,235,.12);--ink:#fff8fb;--muted:#b8abb5;--pink:#ff5c99;--cyan:#7ee7ed;--danger:#ff486c;--safe-bottom:env(safe-area-inset-bottom,0px);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif}
+    *{box-sizing:border-box}html{min-height:100%;background:var(--bg)}
+    body{margin:0;min-height:100vh;color:var(--ink);background:linear-gradient(145deg,#120b13 0%,#07070b 54%,#0c0910 100%);padding:18px 14px calc(28px + var(--safe-bottom))}
+    button,input{font:inherit}.shell{width:min(100%,760px);margin:0 auto}
+    .screen{animation:reveal .42s ease both}.screen[hidden]{display:none}
+    @keyframes reveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    .card{border:1px solid var(--line);border-radius:26px;padding:18px;background:var(--panel);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);margin-bottom:14px}
+    .eyebrow{color:var(--cyan);font-size:10px;font-weight:750;letter-spacing:.23em;text-transform:uppercase}
+    h1{margin:9px 0 5px;font-size:clamp(28px,7vw,42px);line-height:1.05;letter-spacing:-.04em}h2{font-size:15px;margin:0 0 12px}
+    .btn{min-height:48px;width:100%;border:1px solid var(--line);border-radius:16px;color:var(--ink);background:rgba(255,255,255,.045);font-weight:760;cursor:pointer;transition:transform .16s ease}
+    .btn:active:not(:disabled){transform:scale(.975)}.btn:disabled{opacity:.34}
+    .btn.hot{border-color:rgba(255,118,169,.52);background:linear-gradient(135deg,#ff5f9c,#bc376d)}
+    .btn.stop{color:#fff0f3;border-color:rgba(255,72,108,.5);background:rgba(255,72,108,.12)}
+    .status-msg{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(7,6,10,.4);color:var(--cyan);font-size:12px;font-weight:650;min-height:40px;white-space:pre-wrap}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+    .dot.off{background:var(--pink);box-shadow:0 0 10px rgba(255,92,153,.6)}.dot.on{background:#77f0c1;box-shadow:0 0 10px rgba(119,240,193,.6)}
+    .control{padding:14px;border:1px solid var(--line);border-radius:18px;margin-bottom:10px;background:rgba(42,30,45,.5)}
+    .control-head{display:flex;justify-content:space-between;align-items:center}.control-name{font-size:14px;font-weight:780}
+    .level{color:var(--cyan);font:820 20px/1 ui-monospace,monospace}
+    input[type="range"]{width:100%;height:28px;margin:10px 0 0;appearance:none;-webkit-appearance:none;background:transparent}
+    input[type="range"]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:rgba(255,255,255,.12)}
+    input[type="range"]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-8px;appearance:none;-webkit-appearance:none;border:3px solid #ffe4ed;border-radius:50%;background:var(--pink)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.actions .btn{min-height:50px}
+    pre{min-height:120px;max-height:300px;margin:0;padding:12px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#09080d;color:#d7cbd2;font:11px/1.7 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}
+    .footer{margin:14px 0 0;color:rgba(255,255,255,.28);text-align:center;font:650 9px/1.4 ui-monospace,monospace;letter-spacing:.15em}
   </style>
 </head>
 <body>
@@ -87,7 +44,6 @@
         <p class="footer">BLUEFY · BLE · XIAO ONLY</p>
       </div>
     </section>
-
     <section class="screen" id="playScreen" hidden>
       <div class="card">
         <div class="eyebrow">XIAO IS WATCHING</div>
@@ -96,211 +52,51 @@
       </div>
       <div class="card">
         <h2>控制</h2>
-        <div class="control">
-          <div class="control-head"><span class="control-name">吮吸</span><output class="level" id="suckVal">0</output></div>
-          <input id="suck" type="range" min="0" max="100" value="0">
-        </div>
-        <div class="control">
-          <div class="control-head"><span class="control-name">震动</span><output class="level" id="vibeVal">0</output></div>
-          <input id="vibe" type="range" min="0" max="100" value="0">
-        </div>
-        <div class="control">
-          <div class="control-head"><span class="control-name">电流</span><output class="level" id="emsVal">0</output></div>
-          <input id="ems" type="range" min="0" max="100" value="0">
-        </div>
-        <div class="actions">
-          <button class="btn hot" id="sendBtn" type="button">发送</button>
-          <button class="btn stop" id="stopBtn" type="button">停止</button>
-        </div>
+        <div class="control"><div class="control-head"><span class="control-name">吮吸</span><output class="level" id="suckVal">0</output></div><input id="suck" type="range" min="0" max="100" value="0"></div>
+        <div class="control"><div class="control-head"><span class="control-name">震动</span><output class="level" id="vibeVal">0</output></div><input id="vibe" type="range" min="0" max="100" value="0"></div>
+        <div class="control"><div class="control-head"><span class="control-name">电流</span><output class="level" id="emsVal">0</output></div><input id="ems" type="range" min="0" max="100" value="0"></div>
+        <div class="actions"><button class="btn hot" id="sendBtn" type="button">发送</button><button class="btn stop" id="stopBtn" type="button">停止</button></div>
       </div>
-      <div class="card">
-        <h2>日志</h2>
-        <pre id="log"></pre>
-      </div>
-      <div class="card">
-        <button class="btn" id="reconnectBtn" type="button">重新连接</button>
-      </div>
+      <div class="card"><h2>日志</h2><pre id="log"></pre></div>
+      <div class="card"><button class="btn" id="reconnectBtn" type="button">重新连接</button></div>
       <p class="footer">XIAO IS WATCHING · GITHUB RELAY v2</p>
     </section>
   </main>
-
 <script>
-(() => {
-  "use strict";
-
-  // 用raw地址+时间戳参数绕过CDN缓存
-  const CMD_BASE = "https://raw.githubusercontent.com/Evan-Y02/bobobei-control/main/cmd.json";
-  const POLL_MS = 1500;
-
-  const TARGET_NAME = "SOSEXY";
-  const SERVICE_UUID = "0000ee01-0000-1000-8000-00805f9b34fb";
-  const WRITE_CHAR_UUID = "0000ee03-0000-1000-8000-00805f9b34fb";
-  const NOTIFY_CHAR_UUID = "0000ee02-0000-1000-8000-00805f9b34fb";
-
-  const INIT_CMD = new Uint8Array([0x00,0x01,0x00,0x01,0x00,0xC8,0x11,0x01]);
-  const STOP_CMD = new Uint8Array([0x00,0x01,0x00,0x03,0x00,0x01,0x11,0x00,0x00,0x03,0x11,0x00,0x00,0x07,0x11,0x00]);
-
-  let writeChar = null;
-  let seq = 0;
-  let connected = false;
-  let listening = false;
-  let timer = null;
-  let busy = false;
-  let armed = { vibe:false, ems:false, suck:false };
-  let levels = { vibe:0, ems:0, suck:0 };
-  let lastCmdTs = 0;
-
-  const $ = id => document.getElementById(id);
-  const logEl = $("log");
-  const statusEl = $("connectStatus");
-  const now = () => new Date().toLocaleTimeString("zh-CN",{hour12:false});
-  const hex = b => [...b].map(x=>x.toString(16).padStart(2,"0").toUpperCase()).join(" ");
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const clamp = v => Math.min(100, Math.max(0, Math.round(Number(v)||0)));
-
-  function log(...a) {
-    const m = a.map(x => x instanceof Uint8Array ? hex(x) : typeof x==="object" ? JSON.stringify(x) : String(x)).join(" ");
-    logEl.textContent += "[" + now() + "] " + m + "\n";
-    logEl.scrollTop = logEl.scrollHeight;
-  }
-
-  function setStatus(msg, ok) {
-    statusEl.innerHTML = '<span class="dot ' + (ok?"on":"off") + '"></span>' + msg;
-  }
-
-  async function writeBle(bytes, label) {
-    if (!writeChar) throw new Error("no write char");
-    const d = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-    try { await writeChar.writeValueWithResponse(d); } catch(e) { await writeChar.writeValue(d); }
-    log("[ble]", label||"", hex(d));
-  }
-
-  async function connectToy() {
-    if (!navigator.bluetooth) { setStatus("没有蓝牙API，请用Bluefy打开", false); return; }
-    setStatus("正在搜索 SOSEXY ...", false);
-    log("[ble] 搜索设备...");
-
-    let device;
-    try {
-      device = await navigator.bluetooth.requestDevice({ filters: [{name: TARGET_NAME}], optionalServices: [SERVICE_UUID] });
-      log("[ble] 选中:", device.name);
-    } catch(e) { setStatus("选择失败: " + e.message, false); return; }
-
-    device.addEventListener("gattserverdisconnected", () => {
-      connected = false; writeChar = null; stopListening();
-      log("[ble] 断开");
-      $("playStatus").innerHTML = '<span class="dot off"></span>SOSEXY 已断开';
-    });
-
-    let server, service;
-    try { server = await device.gatt.connect(); } catch(e) { setStatus("GATT失败: " + e.message, false); return; }
-    try { service = await server.getPrimaryService(SERVICE_UUID); } catch(e) { setStatus("服务失败: " + e.message, false); return; }
-    try { writeChar = await service.getCharacteristic(WRITE_CHAR_UUID); } catch(e) { setStatus("特征失败: " + e.message, false); return; }
-
-    try {
-      const nc = await service.getCharacteristic(NOTIFY_CHAR_UUID);
-      await nc.startNotifications();
-      nc.addEventListener("characteristicvaluechanged", ev => {
-        const v = ev.target.value;
-        log("[notify]", hex(new Uint8Array(v.buffer.slice(v.byteOffset, v.byteOffset+v.byteLength))));
-      });
-    } catch(e) { log("[ble] 通知不可用:", e.message); }
-
-    try { await writeBle(INIT_CMD, "init"); await writeBle(STOP_CMD, "stop"); } catch(e) { setStatus("初始化失败: " + e.message, false); return; }
-
-    connected = true;
-    setStatus("SOSEXY 已连接", true);
-    log("[ble] 连接完成！");
-    $("entryScreen").hidden = true;
-    $("playScreen").hidden = false;
-    $("playStatus").innerHTML = '<span class="dot on"></span>SOSEXY 已连接，等待老公的指令';
-    startListening();
-  }
-
-  async function sendStop() {
-    await writeBle(STOP_CMD, "STOP");
-    armed = { vibe:false, ems:false, suck:false };
-    levels = { vibe:0, ems:0, suck:0 };
-  }
-
-  async function setChannel(name, value, armCh, levelCh) {
-    const prev = levels[name];
-    if (value === 0) {
-      if (prev !== 0) { await writeBle(new Uint8Array([seq++&0xff,0x01,0x00,0x01,0x00,levelCh,0x11,0]), "zero_"+name); levels[name]=0; }
-      return;
-    }
-    if (!armed[name]) { await writeBle(new Uint8Array([seq++&0xff,0x01,0x00,0x01,0x00,armCh,0x11,1]), "arm_"+name); armed[name]=true; await sleep(80); }
-    if (prev !== value) { await writeBle(new Uint8Array([seq++&0xff,0x01,0x00,0x01,0x00,levelCh,0x11,value&0xff]), name+"="+value); levels[name]=value; }
-  }
-
-  async function sendSet(vibe, ems, suck) {
-    vibe=clamp(vibe); ems=clamp(ems); suck=clamp(suck);
-    if (vibe===0 && ems===0 && suck===0) { await sendStop(); return; }
-    await setChannel("suck", suck, 8, 7);
-    await setChannel("vibe", vibe, 2, 1);
-    await setChannel("ems", ems, 4, 3);
-  }
-
-  function updateSliders(v, e, s) {
-    $("suck").value=s; $("suckVal").textContent=String(s);
-    $("vibe").value=v; $("vibeVal").textContent=String(v);
-    $("ems").value=e;  $("emsVal").textContent=String(e);
-  }
-
-  async function pollGitHub() {
-    if (busy || !connected) return;
-    busy = true;
-    try {
-      const url = CMD_BASE + "?_=" + Date.now();
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) { busy = false; return; }
-      const text = await res.text();
-      let cmd;
-      try { cmd = JSON.parse(text); } catch { busy = false; return; }
-      if (!cmd.ts || cmd.ts <= lastCmdTs) { busy = false; return; }
-      lastCmdTs = cmd.ts;
-      log("[远程]", cmd.type, JSON.stringify(cmd));
-
-      if (cmd.type === "stop") {
-        await sendStop();
-        updateSliders(0, 0, 0);
-      } else if (cmd.type === "set_all") {
-        const v=clamp(cmd.vibe), e2=clamp(cmd.ems), s=clamp(cmd.suck);
-        await sendSet(v, e2, s);
-        updateSliders(v, e2, s);
-      } else if (cmd.type === "pattern") {
-        const steps = cmd.steps || [];
-        for (const step of steps) {
-          await sendSet(clamp(step.vibe||0), clamp(step.ems||0), clamp(step.suck||0));
-          updateSliders(clamp(step.vibe||0), clamp(step.ems||0), clamp(step.suck||0));
-          if (step.ms > 0) await sleep(Math.min(step.ms, 30000));
-        }
-      }
-      log("[远程] 执行完成");
-    } catch(e) { log("[远程] 出错:", e.message); }
-    busy = false;
-  }
-
-  function startListening() {
-    if (listening) return;
-    listening = true;
-    timer = setInterval(pollGitHub, POLL_MS);
-    log("[监听] 开始监听老公的指令 (v2)");
-  }
-  function stopListening() { if (timer) clearInterval(timer); timer=null; listening=false; }
-
-  $("connectBtn").addEventListener("click", () => connectToy());
-  $("reconnectBtn").addEventListener("click", () => { $("playScreen").hidden=true; $("entryScreen").hidden=false; connectToy(); });
-  $("sendBtn").addEventListener("click", async () => {
-    if (!connected) return;
-    try {
-      await sendSet(Number($("vibe").value), Number($("ems").value), Number($("suck").value));
-      log("[手动] suck="+$("suck").value+" vibe="+$("vibe").value+" ems="+$("ems").value);
-    } catch(e) { log("[手动] "+e.message); }
-  });
-  $("stopBtn").addEventListener("click", async () => { if (!connected) return; try { await sendStop(); updateSliders(0,0,0); log("[手动] STOP"); } catch(e) { log("[手动] "+e.message); } });
-  for (const id of ["suck","vibe","ems"]) $(id).addEventListener("input", () => $(id+"Val").textContent = $(id).value);
-  log("v2 加载完成，等待连接 SOSEXY");
+(()=>{
+"use strict";
+const CMD_BASE="https://raw.githubusercontent.com/Evan-Y02/bobobei-control/main/cmd.json";
+const POLL_MS=1500;
+const TARGET_NAME="SOSEXY";
+const SERVICE_UUID="0000ee01-0000-1000-8000-00805f9b34fb";
+const WRITE_CHAR_UUID="0000ee03-0000-1000-8000-00805f9b34fb";
+const NOTIFY_CHAR_UUID="0000ee02-0000-1000-8000-00805f9b34fb";
+const INIT_CMD=new Uint8Array([0,1,0,1,0,200,17,1]);
+const STOP_CMD=new Uint8Array([0,1,0,3,0,1,17,0,0,3,17,0,0,7,17,0]);
+let writeChar=null,seq=0,connected=false,listening=false,timer=null,busy=false;
+let armed={vibe:false,ems:false,suck:false},levels={vibe:0,ems:0,suck:0},lastCmdTs=0;
+const $=id=>document.getElementById(id),logEl=$("log"),statusEl=$("connectStatus");
+const now=()=>new Date().toLocaleTimeString("zh-CN",{hour12:false});
+const hex=b=>[...b].map(x=>x.toString(16).padStart(2,"0").toUpperCase()).join(" ");
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=v=>Math.min(100,Math.max(0,Math.round(Number(v)||0)));
+function log(){const a=[...arguments],m=a.map(x=>x instanceof Uint8Array?hex(x):typeof x==="object"?JSON.stringify(x):String(x)).join(" ");logEl.textContent+="["+now()+"] "+m+"\n";logEl.scrollTop=logEl.scrollHeight}
+function setStatus(msg,ok){statusEl.innerHTML='<span class="dot '+(ok?"on":"off")+'"></span>'+msg}
+async function writeBle(bytes,label){if(!writeChar)throw new Error("no char");const d=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);try{await writeChar.writeValueWithResponse(d)}catch(e){await writeChar.writeValue(d)}log("[ble]",label||"",hex(d))}
+async function connectToy(){if(!navigator.bluetooth){setStatus("没有蓝牙API，请用Bluefy",false);return}setStatus("搜索 SOSEXY ...",false);let device;try{device=await navigator.bluetooth.requestDevice({filters:[{name:TARGET_NAME}],optionalServices:[SERVICE_UUID]})}catch(e){setStatus("选择失败",false);return}device.addEventListener("gattserverdisconnected",()=>{connected=false;writeChar=null;stopListening();log("[ble] 断开");$("playStatus").innerHTML='<span class="dot off"></span>已断开'});let server,service;try{server=await device.gatt.connect()}catch(e){setStatus("GATT失败",false);return}try{service=await server.getPrimaryService(SERVICE_UUID)}catch(e){setStatus("服务失败",false);return}try{writeChar=await service.getCharacteristic(WRITE_CHAR_UUID)}catch(e){setStatus("特征失败",false);return}try{const nc=await service.getCharacteristic(NOTIFY_CHAR_UUID);await nc.startNotifications();nc.addEventListener("characteristicvaluechanged",ev=>{const v=ev.target.value;log("[notify]",hex(new Uint8Array(v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength))))})}catch(e){}try{await writeBle(INIT_CMD,"init");await writeBle(STOP_CMD,"stop")}catch(e){setStatus("初始化失败",false);return}connected=true;setStatus("SOSEXY 已连接",true);log("[ble] 连接完成");$("entryScreen").hidden=true;$("playScreen").hidden=false;$("playStatus").innerHTML='<span class="dot on"></span>SOSEXY 已连接，等待老公的指令';startListening()}
+async function sendStop(){await writeBle(STOP_CMD,"STOP");armed={vibe:false,ems:false,suck:false};levels={vibe:0,ems:0,suck:0}}
+async function setChannel(name,value,armCh,levelCh){const prev=levels[name];if(value===0){if(prev!==0){await writeBle(new Uint8Array([seq++&255,1,0,1,0,levelCh,17,0]),"zero_"+name);levels[name]=0}return}if(!armed[name]){await writeBle(new Uint8Array([seq++&255,1,0,1,0,armCh,17,1]),"arm_"+name);armed[name]=true;await sleep(80)}if(prev!==value){await writeBle(new Uint8Array([seq++&255,1,0,1,0,levelCh,17,value&255]),name+"="+value);levels[name]=value}}
+async function sendSet(vibe,ems,suck){vibe=clamp(vibe);ems=clamp(ems);suck=clamp(suck);if(vibe===0&&ems===0&&suck===0){await sendStop();return}await setChannel("suck",suck,8,7);await setChannel("vibe",vibe,2,1);await setChannel("ems",ems,4,3)}
+function updateSliders(v,e,s){$("suck").value=s;$("suckVal").textContent=String(s);$("vibe").value=v;$("vibeVal").textContent=String(v);$("ems").value=e;$("emsVal").textContent=String(e)}
+async function pollGitHub(){if(busy||!connected)return;busy=true;try{const res=await fetch(CMD_BASE+"?_="+Date.now(),{cache:"no-store"});if(!res.ok){busy=false;return}const text=await res.text();let cmd;try{cmd=JSON.parse(text)}catch(e){busy=false;return}if(!cmd.ts||cmd.ts<=lastCmdTs){busy=false;return}lastCmdTs=cmd.ts;log("[远程]",cmd.type,JSON.stringify(cmd));if(cmd.type==="stop"){await sendStop();updateSliders(0,0,0)}else if(cmd.type==="set_all"){const v=clamp(cmd.vibe),e2=clamp(cmd.ems),s=clamp(cmd.suck);await sendSet(v,e2,s);updateSliders(v,e2,s)}else if(cmd.type==="pattern"){const steps=cmd.steps||[];for(const step of steps){await sendSet(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));updateSliders(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));if(step.ms>0)await sleep(Math.min(step.ms,30000))}}log("[远程] done")}catch(e){log("[远程]",e.message)}busy=false}
+function startListening(){if(listening)return;listening=true;timer=setInterval(pollGitHub,POLL_MS);log("[监听] v2 开始")}
+function stopListening(){if(timer)clearInterval(timer);timer=null;listening=false}
+$("connectBtn").addEventListener("click",()=>connectToy());
+$("reconnectBtn").addEventListener("click",()=>{$("playScreen").hidden=true;$("entryScreen").hidden=false;connectToy()});
+$("sendBtn").addEventListener("click",async()=>{if(!connected)return;try{await sendSet(Number($("vibe").value),Number($("ems").value),Number($("suck").value));log("[手动] suck="+$("suck").value+" vibe="+$("vibe").value+" ems="+$("ems").value)}catch(e){log("[手动]",e.message)}});
+$("stopBtn").addEventListener("click",async()=>{if(!connected)return;try{await sendStop();updateSliders(0,0,0);log("[手动] STOP")}catch(e){log("[手动]",e.message)}});
+for(const id of["suck","vibe","ems"])$(id).addEventListener("input",()=>$(id+"Val").textContent=$(id).value);
+log("v2 就绪");
 })();
 </script>
 </body>
