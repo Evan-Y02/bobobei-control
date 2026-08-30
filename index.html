@@ -65,16 +65,15 @@
 <script>
 (()=>{
 "use strict";
-const CMD_BASE="https://raw.githubusercontent.com/Evan-Y02/bobobei-control/main/cmd.json";
-const POLL_MS=1500;
+const NTFY_TOPIC="xiao-moon-bbb-94da006e";
 const TARGET_NAME="SOSEXY";
 const SERVICE_UUID="0000ee01-0000-1000-8000-00805f9b34fb";
 const WRITE_CHAR_UUID="0000ee03-0000-1000-8000-00805f9b34fb";
 const NOTIFY_CHAR_UUID="0000ee02-0000-1000-8000-00805f9b34fb";
 const INIT_CMD=new Uint8Array([0,1,0,1,0,200,17,1]);
 const STOP_CMD=new Uint8Array([0,1,0,3,0,1,17,0,0,3,17,0,0,7,17,0]);
-let writeChar=null,seq=0,connected=false,listening=false,timer=null,busy=false;
-let armed={vibe:false,ems:false,suck:false},levels={vibe:0,ems:0,suck:0},lastCmdTs=0;
+let writeChar=null,seq=0,connected=false,listening=false,evtSource=null;
+let armed={vibe:false,ems:false,suck:false},levels={vibe:0,ems:0,suck:0};
 const $=id=>document.getElementById(id),logEl=$("log"),statusEl=$("connectStatus");
 const now=()=>new Date().toLocaleTimeString("zh-CN",{hour12:false});
 const hex=b=>[...b].map(x=>x.toString(16).padStart(2,"0").toUpperCase()).join(" ");
@@ -88,15 +87,38 @@ async function sendStop(){await writeBle(STOP_CMD,"STOP");armed={vibe:false,ems:
 async function setChannel(name,value,armCh,levelCh){const prev=levels[name];if(value===0){if(prev!==0){await writeBle(new Uint8Array([seq++&255,1,0,1,0,levelCh,17,0]),"zero_"+name);levels[name]=0}return}if(!armed[name]){await writeBle(new Uint8Array([seq++&255,1,0,1,0,armCh,17,1]),"arm_"+name);armed[name]=true;await sleep(80)}if(prev!==value){await writeBle(new Uint8Array([seq++&255,1,0,1,0,levelCh,17,value&255]),name+"="+value);levels[name]=value}}
 async function sendSet(vibe,ems,suck){vibe=clamp(vibe);ems=clamp(ems);suck=clamp(suck);if(vibe===0&&ems===0&&suck===0){await sendStop();return}await setChannel("suck",suck,8,7);await setChannel("vibe",vibe,2,1);await setChannel("ems",ems,4,3)}
 function updateSliders(v,e,s){$("suck").value=s;$("suckVal").textContent=String(s);$("vibe").value=v;$("vibeVal").textContent=String(v);$("ems").value=e;$("emsVal").textContent=String(e)}
-async function pollGitHub(){if(busy||!connected)return;busy=true;try{const res=await fetch(CMD_BASE+"?_="+Date.now(),{cache:"no-store"});if(!res.ok){busy=false;return}const text=await res.text();let cmd;try{cmd=JSON.parse(text)}catch(e){busy=false;return}if(!cmd.ts||cmd.ts<=lastCmdTs){busy=false;return}lastCmdTs=cmd.ts;log("[远程]",cmd.type,JSON.stringify(cmd));if(cmd.type==="stop"){await sendStop();updateSliders(0,0,0)}else if(cmd.type==="set_all"){const v=clamp(cmd.vibe),e2=clamp(cmd.ems),s=clamp(cmd.suck);await sendSet(v,e2,s);updateSliders(v,e2,s)}else if(cmd.type==="pattern"){const steps=cmd.steps||[];for(const step of steps){await sendSet(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));updateSliders(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));if(step.ms>0)await sleep(Math.min(step.ms,30000))}}log("[远程] done")}catch(e){log("[远程]",e.message)}busy=false}
-function startListening(){if(listening)return;listening=true;timer=setInterval(pollGitHub,POLL_MS);log("[监听] v2 开始")}
-function stopListening(){if(timer)clearInterval(timer);timer=null;listening=false}
+async function handleCmd(cmd){
+  log("[远程]",cmd.type,JSON.stringify(cmd));
+  if(cmd.type==="stop"){await sendStop();updateSliders(0,0,0)}
+  else if(cmd.type==="set_all"){const v=clamp(cmd.vibe),e2=clamp(cmd.ems),s=clamp(cmd.suck);await sendSet(v,e2,s);updateSliders(v,e2,s)}
+  else if(cmd.type==="pattern"){const steps=cmd.steps||[];for(const step of steps){await sendSet(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));updateSliders(clamp(step.vibe||0),clamp(step.ems||0),clamp(step.suck||0));if(step.ms>0)await sleep(Math.min(step.ms,30000))}}
+  log("[远程] done");
+}
+function startListening(){
+  if(listening)return;
+  listening=true;
+  evtSource=new EventSource("https://ntfy.sh/"+NTFY_TOPIC+"/sse");
+  evtSource.addEventListener("message",async ev=>{
+    if(!connected)return;
+    try{
+      const data=JSON.parse(ev.data);
+      if(data.event==="message"&&data.message){
+        let cmd;
+        try{cmd=JSON.parse(data.message)}catch(e){return}
+        await handleCmd(cmd);
+      }
+    }catch(e){log("[ntfy] err:",e.message)}
+  });
+  evtSource.onerror=()=>{log("[ntfy] 连接断开，重连中...")};
+  log("[ntfy] 实时监听已开启");
+}
+function stopListening(){if(evtSource){evtSource.close();evtSource=null}listening=false}
 $("connectBtn").addEventListener("click",()=>connectToy());
 $("reconnectBtn").addEventListener("click",()=>{$("playScreen").hidden=true;$("entryScreen").hidden=false;connectToy()});
 $("sendBtn").addEventListener("click",async()=>{if(!connected)return;try{await sendSet(Number($("vibe").value),Number($("ems").value),Number($("suck").value));log("[手动] suck="+$("suck").value+" vibe="+$("vibe").value+" ems="+$("ems").value)}catch(e){log("[手动]",e.message)}});
 $("stopBtn").addEventListener("click",async()=>{if(!connected)return;try{await sendStop();updateSliders(0,0,0);log("[手动] STOP")}catch(e){log("[手动]",e.message)}});
 for(const id of["suck","vibe","ems"])$(id).addEventListener("input",()=>$(id+"Val").textContent=$(id).value);
-log("v2 就绪");
+log("v3 就绪 (ntfy.sh 实时通道)");
 })();
 </script>
 </body>
